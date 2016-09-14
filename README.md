@@ -13,3 +13,34 @@ This includes preparing the Jetson TK1 board, activating the drone and setting u
 * Install OpenCV on the board. Setup OpenCV 2.4.9 instead of the latest version as it contains the non-free packages as well (SIFT, SURF etc.). Follow this [link] (https://docs.google.com/document/d/1Fk_TDtEYP2b3LLZQTsYia96HplF_5mV7wHlRgcwBHVk/pub).
 * Connect the drone to Jetson using UART CANN 2 port and setup a serial communication between the two. Refer to the [Jetson GPIO] (http://elinux.org/Jetson/GPIO) to get the pin number of the I/O ports. [Here] (https://developer.dji.com/onboard-sdk/documentation/hardware-setup/index.html) is the complete hardware setup guide. 
 * To use the Onboard SDK feature of Matrice 100 one has to create an app on dji developers website and activate the drone. Steps are mentioned [here](http://forum.dev.dji.com/thread-31786-1-1.html). Download the mentioned DJI_Onboard_SDK_Windows_QT_Sample file from [here](https://github.com/dji-sdk/Onboard-SDK).
+
+##DJI Onboard SDK ROS
+This ROS example implements functionality of the DJI Onboard-SDK. It consists of the core library and client packages demonstrating communication with Matrice 100 and A3 flight controllers. Clone the repository into your system and [catkin-make](http://wiki.ros.org/catkin/commands/catkin_make) to compile the libraries. Packages included are:
+* dji_sdk
+* dji_sdk_demo
+* dji_sdk_web_groundstation
+* dji_sdk_read_cam
+* dji_sdk_dji2mav
+
+Apart from the DJI Onboard SDK packages, two addtional packages have been included which are explained below.
+## Detection and Distance Estimation
+[This] package is responsible for detection of the target around the UAV and estimating its distance and generating control signals accordingly to maneuver the drone to the location precisely. This package has been divided into two parts:
+
+**SIFT features**
+
+[This] Python file contains the algorithm to detect the target in the image acquired from camera and estimate the distance from the drone. The algorithm is based on the [SIFT](http://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_feature2d/py_sift_intro/py_sift_intro.html) feauture extraction method included in the OpenCV library. When applied on an image, this method identifies and stores the keypoints in the input image. Each keypoint is assigned a 128 elements long unique descriptor vector. For example here keypoints are extracted in this image which is used as the landing mark for the drone. This image will play the role of the training image.
+
+Now features of the input image from the camera of the drone are extracted and stored.
+
+Finally the features from bothe the images are matched and the target is identified. This feature matching is done through a Euclidean-distance based nearest neighbor approach.
+
+Now when the target has been identified in the input image, distance can be estimated using the basic principles of cartesian geometry.
+
+1. Calculate the mean of all the matched feature points (x and y coordinates separately). This will approximately give the point at the centre of the landing mark.
+2. Position of the drone can be approximated as the centre of the image as the camera is facing vertically downwards.
+3. Using the distance formula between two coordinates on a horizontal plane separation between the drone and the target can be estimated. **We don't have to worry about the vertical distance of the drone from the ground as the drone itself keeps the record of that**.
+
+**Maneuvering the drone**
+
+After calculating the distance in the x and y directions, task is to maneuver the drone to the desired location and land safely. [This] Python file uses the pre-defined libraries of DJI Onboard SDK to perform mentioned tasks. The distance in the x and y directions calculated above are used here to guide the drone in [attitude mode](http://wiki.dji.com/en/index.php/Control_Mode#Attitude_Mode).
+ 
