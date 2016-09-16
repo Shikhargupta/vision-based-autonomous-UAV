@@ -30,9 +30,21 @@ Apart from the DJI Onboard SDK packages, two addtional packages have been includ
 
 [This] Python file contains the algorithm to detect the target in the image acquired from camera and estimate the distance from the drone. The algorithm is based on the [SIFT](http://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_feature2d/py_sift_intro/py_sift_intro.html) feauture extraction method included in the OpenCV library. When applied on an image, this method identifies and stores the keypoints in the input image. Each keypoint is assigned a 128 elements long unique descriptor vector. For example here keypoints are extracted in this image which is used as the landing mark for the drone. This image will play the role of the training image.
 
+<p align="center">
+  <img src="images/sift_keypoints.jpg" width="500"/>
+</p>
+
 Now features of the input image from the camera of the drone are extracted and stored.
 
-Finally the features from bothe the images are matched and the target is identified. This feature matching is done through a Euclidean-distance based nearest neighbor approach.
+<p align="center">
+  <img src="images/sift_keypoints_2.jpg" width="500"/>
+</p>
+
+Finally the features from both the images (input image used here is different from the one used above) are matched and the target is identified. This feature matching is done through a Euclidean-distance based nearest neighbor approach.
+
+<p align="center">
+  <img src="images/matched.jpg" width="500"/>
+</p>
 
 Now when the target has been identified in the input image, distance can be estimated using the basic principles of cartesian geometry.
 
