@@ -1,0 +1,25 @@
+import time
+import sys
+import rospy
+import roslib
+import numpy as np
+import cv2
+import cv
+import math
+from cv_bridge import CvBridge, CvBridgeError
+from sensor_msgs.msg import Image
+import rospkg
+
+
+def main():
+	def image_converter():
+		image_sub = rospy.Subscriber("/usb_cam/image_raw",Image,callback)
+	def callback(data):
+		bridge = CvBridge()
+		global cv_image
+		cv_image = bridge.imgmsg_to_cv2(data, "bgr8")
+	time.sleep(86)
+	ic = image_converter()
+	rospy.init_node('image_converter', anonymous=True)
+	cv_image_gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
+	cv2.imwrite("/home/ubuntu/ck_ws/src/my_pkg/src/tutorial_package/capture1.jpg", cv_image_gray)    

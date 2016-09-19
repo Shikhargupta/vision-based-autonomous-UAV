@@ -1,0 +1,109 @@
+#!/usr/bin/env python
+
+from dji_sdk.dji_drone import DJIDrone
+import dji_sdk.msg 
+import time
+import sys
+import numpy as np
+import cv2
+import math
+
+def main():
+	print "start"
+
+	drone.request_sdk_permission_control()
+	time.sleep(2)
+
+	drone.gimbal_angle_control(0, 0, 0, 20)
+	time.sleep(2)
+
+	drone.takeoff()
+	time.sleep(5)
+
+	drone.global_position_navigation_send_request(22.535, 113.95, 3)
+	time.sleep(1000)
+
+
+
+
+	MIN_MATCH_COUNT = 10
+
+	img1 = cv2.imread('help21.png',0)          # queryImage
+	img2 = cv2.imread('help.JPG',0) # trainImage
+
+	# plt.imshow(img2, 'gray'),plt.show()
+
+	# Initiate SIFT detector
+	sift = cv2.SIFT()
+
+	# find the keypoints and descriptors with SIFT
+	kp1, des1 = sift.detectAndCompute(img1,None)
+	kp2, des2 = sift.detectAndCompute(img2,None)
+
+	FLANN_INDEX_KDTREE = 0 
+	index_params = dict(algorithm = FLANN_INDEX_KDTREE, trees = 5)
+	search_params = dict(checks = 50)
+
+	flann = cv2.FlannBasedMatcher(index_params, search_params)
+
+	matches = flann.knnMatch(des1,des2,k=2)
+
+	# store all the good matches as per Lowe's ratio test.
+	length = 0
+	good = []
+	for m,n in matches:
+	    if m.distance < 0.7*n.distance:
+		good.append(m)
+	if len(good)>MIN_MATCH_COUNT:
+	    src_pts = np.float32([ kp1[m.queryIdx].pt for m in good ]).reshape(-1,1,2)
+	    dst_pts = np.float32([ kp2[m.trainIdx].pt for m in good ]).reshape(-1,1,2)
+	    length = length +1
+	    print dst_pts
+	    M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC,5.0)
+	    matchesMask = mask.ravel().tolist()
+
+	    h,w = img1.shape
+	    pts = np.float32([ [0,0],[0,h-1],[w-1,h-1],[w-1,0] ]).reshape(-1,1,2)
+	    dst = cv2.perspectiveTransform(pts,M)
+
+	    img2 = cv2.polylines(img2,[np.int32(dst)],True,255,3, cv2.CV_AA)
+
+	else:
+	    print "Not enough matches are found - %d/%d" % (len(good),MIN_MATCH_COUNT)
+	    matchesMask = None
+
+	sumx = 0
+	sumy = 0
+	c = 0
+	for x in dst_pts:
+	  c = c + 1
+	  sumx = sumx + x[0][0]
+	  sumy = sumy + x[0][1]
+	sumxc = sumx / c
+	sumyc = sumy / c
+
+	coor_x = sumxc - 2000
+	coor_y = sumyc - 1125
+	UNKNOWN_PIXELA = (2000 - sumxc)*(2000 - sumxc)
+	UNKNOWN_PIXELB = (1125 - sumyc)*(1125 - sumyc)
+	UNKNOWN_PIXELC = UNKNOWN_PIXELB+UNKNOWN_PIXELA
+	UNKNOWN_PIXEL = np.power(UNKNOWN_PIXELC,.5)
+
+
+	KNOWN_DISTANCE = .45 
+
+	KNOWN_PIXEL = 438.25 
+
+	inches_x = .45*sumxc/438.25
+	inches_y = .45*sumyc/438.25
+
+	print inches_x, inches_y
+
+
+	drone.attitude_control(DJIDrone.HORIZ_POS|DJIDrone.VERT_VEL|DJIDrone.YAW_ANG|DJIDrone.HORIZ_BODY|DJIDrone.STABLE_ON, inches_x, 		inches_y, 0, 0)
+	time.sleep(0.02)
+
+	drone.landing()
+
+if __name__ == "__main__":
+    main()

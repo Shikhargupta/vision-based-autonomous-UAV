@@ -1,0 +1,5 @@
+<launch>
+	<node pkg="my_pkg" type="client" name="client" output="screen">
+		<param name="sample_image" value="/home/ubuntu/ck_ws/src/my_pkg/src/tutorial_package/help.JPG" />
+	</node>
+</launch>

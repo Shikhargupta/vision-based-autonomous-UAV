@@ -1,0 +1,8 @@
+#! /usr/bin/env python
+
+import tut_pkg.cam
+
+
+
+if __name__ == '__main__':
+	tut_pkg.cam.main()

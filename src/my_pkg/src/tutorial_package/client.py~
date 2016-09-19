@@ -1,0 +1,51 @@
+from dji_sdk.dji_drone import DJIDrone
+import dji_sdk.msg 
+import time
+import sys
+import rospy
+import roslib
+import numpy as np
+import cv2
+import cv
+import math
+from test import test
+from cv_bridge import CvBridge, CvBridgeError
+from sensor_msgs.msg import Image
+import rospkg
+from matplotlib import pyplot as plt
+
+def main():
+		
+	drone = DJIDrone()
+	
+	drone.request_sdk_permission_control()
+	time.sleep(7)
+
+	time.sleep(50)
+	
+	#Motors running
+	drone.arm_drone()
+	time.sleep(5)
+
+	#Navigate the drone to a height of 5 meters
+	drone.local_position_navigation_send_request(0, 0, 5)
+	time.sleep(15)
+
+	#Delay for camera to save the image
+	time.sleep(15)
+
+	img = cv2.imread("/home/ubuntu/ck_ws/src/my_pkg/src/tutorial_package/testimage.png", 0)
+	cv_image_gray = cv2.imread("/home/ubuntu/ck_ws/src/my_pkg/src/tutorial_package/capture1.jpg", 0)
+	x, y = test(img, cv_image_gray)
+
+	#Navigate the drone to the desired location of the target
+	if x!=0 and y!=0:
+		drone.local_position_navigation_send_request(x, 0, 3)
+		time.sleep(15)
+	
+		drone.local_position_navigation_send_request(x, y, 3)
+		time.sleep(15)
+
+	#landing command
+	drone.landing()
+	time.sleep(20)
