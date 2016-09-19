@@ -24,11 +24,11 @@ This ROS example implements functionality of the DJI Onboard-SDK. It consists of
 
 Apart from the DJI Onboard SDK packages, two addtional packages have been included which are explained below.
 ## Detection and Distance Estimation
-[This] package is responsible for detection of the target around the UAV and estimating its distance and generating control signals accordingly to maneuver the drone to the location precisely. This package has been divided into two parts:
+[This] (src/my_pkg) package is responsible for detection of the target around the UAV and estimating its distance and generating control signals accordingly to maneuver the drone to the location precisely. This package has been divided into two parts:
 
 **SIFT features**
 
-[This] Python file contains the algorithm to detect the target in the image acquired from camera and estimate the distance from the drone. The algorithm is based on the [SIFT](http://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_feature2d/py_sift_intro/py_sift_intro.html) feauture extraction method included in the OpenCV library. When applied on an image, this method identifies and stores the keypoints in the input image. Each keypoint is assigned a 128 elements long unique descriptor vector. For example here keypoints are extracted in this image which is used as the landing mark for the drone. This image will play the role of the training image.
+[This] (src/my_pkg/src/tutorial_package/test.py) Python file contains the algorithm to detect the target in the image acquired from camera and estimate the distance from the drone. The algorithm is based on the [SIFT](http://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_feature2d/py_sift_intro/py_sift_intro.html) feauture extraction method included in the OpenCV library. When applied on an image, this method identifies and stores the keypoints in the input image. Each keypoint is assigned a 128 elements long unique descriptor vector. For example here keypoints are extracted in this image which is used as the landing mark for the drone. This image will play the role of the training image.
 
 <p align="center">
   <img src="images/sift_keypoints.jpg" width="500"/>
@@ -54,5 +54,5 @@ Now when the target has been identified in the input image, distance can be esti
 
 **Maneuvering the drone**
 
-After calculating the distance in the x and y directions, task is to maneuver the drone to the desired location and land safely. [This] Python file uses the pre-defined libraries of DJI Onboard SDK to perform mentioned tasks. The distance in the x and y directions calculated above are used here to guide the drone in [attitude mode](http://wiki.dji.com/en/index.php/Control_Mode#Attitude_Mode).
+After calculating the distance in the x and y directions, task is to maneuver the drone to the desired location and land safely. [This] (src/my_pkg/src/tutorial_package/client.py) Python file uses the pre-defined libraries of DJI Onboard SDK to perform mentioned tasks. The distance in the x and y directions calculated above are used here to guide the drone in [attitude mode](http://wiki.dji.com/en/index.php/Control_Mode#Attitude_Mode).
  
