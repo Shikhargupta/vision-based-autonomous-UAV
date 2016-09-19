@@ -55,4 +55,16 @@ Now when the target has been identified in the input image, distance can be esti
 **Maneuvering the drone**
 
 After calculating the distance in the x and y directions, task is to maneuver the drone to the desired location and land safely. [This] (src/my_pkg/src/tutorial_package/client.py) Python file uses the pre-defined libraries of DJI Onboard SDK to perform mentioned tasks. The distance in the x and y directions calculated above are used here to guide the drone in [attitude mode](http://wiki.dji.com/en/index.php/Control_Mode#Attitude_Mode).
- 
+
+## Image Acquisition
+
+It is required to get the image from the camera mounted on the drone and give it to the vision algorithm so that it could calculate the distance of the target from the drone. For this purpose a combination of packages is used. To convert the image from the camera into the format compatible with ROS (ROS image) [usb_cam] (http://wiki.ros.org/usb_cam) package is used.
+```bash
+sudo apt-get install ros-indigo-usb-cam
+```
+To use the ROS image with the OpenCV cv_bridge library has to be included into the manifest file of the rospy package. [Here](http://wiki.ros.org/cv_bridge/Tutorials/ConvertingBetweenROSImagesAndOpenCVImagesPython) is an example that listens to a ROS image message topic, converts the images into an IplImage, draws a circle on it and displays the image using OpenCV. The image is then republished over ROS. 
+
+[This](src/my_pkg1/src/tut_pkg/cam.py) python code implements this and converts the image from camera into ROS image which is further converted into OpenCV image and given to the vision algorithm.
+
+## Conclusion
+The above framework was experimented at a height of 3 and 5 meters above the ground and worked well except when wind currents were strong which gave error due to small size of the landing platform (A4 sheet). DJI onboard SDK provides control over drone in both GPS and non-GPS modes and can be used according to the scenario in which drone is to be used. Have a look at the [dji_sdk_demo] (src/dji_sdk_demo/script/client.py) to get the feel of all the control commands available.
