@@ -6,7 +6,7 @@ The drone used is [DJI-Matrice](http://www.dji.com/matrice100). NVIDIA [Jetson-T
   <img src="images/drone.jpg" width="500"/>
 </p>
 
-##Setting up the hardware
+## Setting up the hardware
 This includes preparing the Jetson TK1 board, activating the drone and setting up a serial communication between them. 
 * Flash Jetpack on the board to use all the features of the TK1 board. [Here](https://www.youtube.com/watch?v=J-ma4aZyqfY) is the video which shows all the steps clearly. 
 * Install ROS (Indigo version is used here as it is most compatible with the libraries used) by following the [steps](http://wiki.ros.org/indigo/Installation/UbuntuARM).
@@ -14,7 +14,7 @@ This includes preparing the Jetson TK1 board, activating the drone and setting u
 * Connect the drone to Jetson using UART CANN 2 port and setup a serial communication between the two. Refer to the [Jetson GPIO](http://elinux.org/Jetson/GPIO) to get the pin number of the I/O ports. [Here](https://developer.dji.com/onboard-sdk/documentation/hardware-setup/index.html) is the complete hardware setup guide. 
 * To use the Onboard SDK feature of Matrice 100 one has to create an app on dji developers website and activate the drone. Steps are mentioned [here](http://forum.dev.dji.com/thread-31786-1-1.html). Download the mentioned DJI_Onboard_SDK_Windows_QT_Sample file from [here](https://github.com/dji-sdk/Onboard-SDK).
 
-##DJI Onboard SDK ROS
+## DJI Onboard SDK ROS
 This ROS example implements functionality of the DJI Onboard-SDK. It consists of the core library and client packages demonstrating communication with Matrice 100 and A3 flight controllers. Clone the repository into your system and [catkin-make](http://wiki.ros.org/catkin/commands/catkin_make) to compile the libraries. Packages included are:
 * dji_sdk
 * dji_sdk_demo
